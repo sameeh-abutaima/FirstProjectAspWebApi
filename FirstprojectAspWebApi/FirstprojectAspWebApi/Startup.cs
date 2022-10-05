@@ -1,3 +1,6 @@
+using FirstprojectAspWebApi.Extensions;
+using FirstprojectAspWebApi.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -6,10 +9,13 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace FirstprojectAspWebApi
@@ -28,10 +34,57 @@ namespace FirstprojectAspWebApi
         {
 
             services.AddControllers();
+            services.AddDbContext<FirstprojectAspWebApiDbContext>();
+
+            services.AddScoped<IUserManager, UserManager>();
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            services.AddLogging();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "FirstprojectAspWebApi", Version = "v1" });
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Description = "Please insert Bearer JWT token, Example: 'Bearer {token}'",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey
+                });
+
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            },
+                            Scheme = "oauth2",
+                            Name = "Bearer",
+                            In = ParameterLocation.Header
+                        },
+                        new List<string>()
+                    }
+                });
             });
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                    .AddJwtBearer(options =>
+                    {
+                        options.TokenValidationParameters = new TokenValidationParameters
+                        {
+                            ValidateIssuer = true,
+                            ValidateAudience = true,
+                            ValidateLifetime = true,
+                            ValidateIssuerSigningKey = true,
+                            ValidIssuer = Configuration["Jwt:Issuer"], // test.com
+                            ValidAudience = Configuration["Jwt:Issuer"],
+                            ClockSkew = TimeSpan.Zero,
+                            IssuerSigningKey = new SymmetricSecurityKey(
+                                                   Encoding.UTF8.GetBytes(Configuration["Jwt:Key"])
+                                                   )
+                        };
+                    });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -44,10 +97,17 @@ namespace FirstprojectAspWebApi
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "FirstprojectAspWebApi v1"));
             }
 
+            Log.Logger = new LoggerConfiguration()
+                          .WriteTo.File("Logs/log.txt", rollingInterval: RollingInterval.Minute)
+                          .CreateLogger();
+
+            app.ConfigureExceptionHandler(Log.Logger, env);
+
             app.UseHttpsRedirection();
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

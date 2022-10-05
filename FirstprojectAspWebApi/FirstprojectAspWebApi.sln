@@ -3,7 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32825.248
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FirstprojectAspWebApi", "FirstprojectAspWebApi\FirstprojectAspWebApi.csproj", "{15749FDF-D734-4DCF-966B-85090F911B5A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FirstprojectAspWebApi", "FirstprojectAspWebApi\FirstprojectAspWebApi.csproj", "{15749FDF-D734-4DCF-966B-85090F911B5A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FirstprojectAspWebApi.Common", "FirstprojectAspWebApi.Common\FirstprojectAspWebApi.Common.csproj", "{A753A0EA-7537-415B-BF93-82F3514655FB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FirstprojectAspWebApi.Core", "FirstprojectAspWebApi.Core\FirstprojectAspWebApi.Core.csproj", "{650B3EAD-0E53-4DF4-B906-15A3CE130A2C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FirstprojectAspwebApi.DTOs", "FirstprojectAspwebApi.DTOs\FirstprojectAspwebApi.DTOs.csproj", "{DCD3BDB7-838E-44C8-B043-1E8835ABEB9C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FirstprojectAspWebApi.DbModels", "FirstprojectAspWebApi.DbModels\FirstprojectAspWebApi.DbModels.csproj", "{7760D316-942B-4CF7-8BC3-FFFBD72DD4A4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +23,22 @@ Global
 		{15749FDF-D734-4DCF-966B-85090F911B5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{15749FDF-D734-4DCF-966B-85090F911B5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{15749FDF-D734-4DCF-966B-85090F911B5A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A753A0EA-7537-415B-BF93-82F3514655FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A753A0EA-7537-415B-BF93-82F3514655FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A753A0EA-7537-415B-BF93-82F3514655FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A753A0EA-7537-415B-BF93-82F3514655FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{650B3EAD-0E53-4DF4-B906-15A3CE130A2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{650B3EAD-0E53-4DF4-B906-15A3CE130A2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{650B3EAD-0E53-4DF4-B906-15A3CE130A2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{650B3EAD-0E53-4DF4-B906-15A3CE130A2C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DCD3BDB7-838E-44C8-B043-1E8835ABEB9C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DCD3BDB7-838E-44C8-B043-1E8835ABEB9C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DCD3BDB7-838E-44C8-B043-1E8835ABEB9C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DCD3BDB7-838E-44C8-B043-1E8835ABEB9C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7760D316-942B-4CF7-8BC3-FFFBD72DD4A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7760D316-942B-4CF7-8BC3-FFFBD72DD4A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7760D316-942B-4CF7-8BC3-FFFBD72DD4A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7760D316-942B-4CF7-8BC3-FFFBD72DD4A4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
