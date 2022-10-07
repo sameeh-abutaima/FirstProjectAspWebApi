@@ -1,6 +1,4 @@
-﻿
-
-using FirstprojectAspWebApi.DTOs.Users;
+﻿using FirstprojectAspWebApi.DTOs.Users;
 using FirstprojectAspWebApi.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;

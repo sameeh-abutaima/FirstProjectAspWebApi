@@ -1,44 +1,88 @@
-﻿using FirstprojectAspWebApi.Core.Managers.Interfaces;
+﻿using AutoMapper;
+using FirstprojectAspWebApi.Core.Managers.Interfaces;
+using FirstprojectAspWebApi.DbModels.Models;
 using FirstprojectAspWebApi.DTOs.Users;
+using FirstprojectAspWebApi.Exceptions;
 using FirstprojectAspWebApi.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace FirstprojectAspWebApi.Core.Managers
 {
     public class UserManager : IUserManager
     {
-        #region dependency injection
+        #region dependencyInjection
+        private readonly FirstprojectAspWebApiDbContext _context;
+        private readonly IMapper _mapper;
         private readonly IConfiguration _config;
-        public UserManager(IConfiguration config)
+        public UserManager(FirstprojectAspWebApiDbContext context,IMapper mapper,IConfiguration config)
         {
+            _context = context;
+            _mapper = mapper;
             _config = config;
         }
 
-        #endregion dependency injection
+        #endregion dependencyInjection
 
 
         #region public
-        public UserLoginResponseDTO Login(UserLoginDTO userLoginDTO)
+        public UserLoginResponseDTO LogIn(UserLoginDTO userLoginDTO)
         {
-            throw new NotImplementedException();
+            var user = _context.Users.FirstOrDefault(usr => usr.Email.ToLower().Equals(userLoginDTO.Email.ToLower()));
+            if (user == null || !VerifyHashPassword(userLoginDTO.Password, user.Password))
+            {
+                throw new ServiceValidationException(300, "Invalid email or password received");
+            }
+            var result = _mapper.Map<UserLoginResponseDTO>(user);
+            result.Token = $"Bearer {GenerateJwtToken(user)}";
+            return result;
         }
 
         public UserLoginResponseDTO SignUp(UserRegistrationDTO userRegistrationDTO)
         {
-            throw new NotImplementedException();
+            if (_context.Users.Any(usr => usr.Email.ToLower().Equals(userRegistrationDTO.Email.ToLower())))
+            {
+                throw new ServiceValidationException("user already exist");
+            }
+            var hashedPassword = HashPassword(userRegistrationDTO.Password);
+            var user = _context.Users.Add(
+                new User
+                {
+                    FirstName = userRegistrationDTO.FirstName,
+                    LastName = userRegistrationDTO.LastName,
+                    Email = userRegistrationDTO.Email,
+                    Password = hashedPassword,
+                    ConfirmPassword = hashedPassword,
+                    ImageUrl = string.Empty
+
+                }).Entity;
+            _context.SaveChanges();
+            var result = _mapper.Map<UserLoginResponseDTO>(user);
+            result.Token = $"Bearer {GenerateJwtToken(user)}";
+            return result;
         }
 
-        public UserDTO UpdateProfile(UserDTO userDTO)
+        public UserDTO UpdateProfile(UserDTO currentUserDTO,UserDTO userDTO)
         {
-            throw new NotImplementedException();
+            var user = _context.Users.FirstOrDefault(usr => usr.Id == currentUserDTO.Id)
+                ?? throw new ServiceValidationException("User Not Found");
+            var url = "";
+            if (!string.IsNullOrWhiteSpace(userDTO.ImageString))
+            {
+                url = Helper.Helper.SaveImage(userDTO.ImageString, "profileimages");
+            }
+            if (!string.IsNullOrWhiteSpace(url))
+            {
+                var baseURL = "http://localhost:38197/";
+                user.ImageUrl = @$"{baseURL}/api/v1/user/fileretrive/profilepic?filename={url}";
+            }
+            _context.SaveChanges();
+            return _mapper.Map<UserDTO>(user);
         }
         #endregion public
 

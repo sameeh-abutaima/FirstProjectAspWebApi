@@ -1,84 +1,46 @@
-﻿
-using AutoMapper;
+﻿using FirstprojectAspWebApi.Core.Managers.Interfaces;
 using FirstprojectAspWebApi.DTOs.Users;
-using FirstprojectAspWebApi.Exceptions;
-using FirstprojectAspWebApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
 using System.IO;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
 
 namespace FirstprojectAspWebApi.Controllers
 {
     [ApiController]
     public class UserController : ApiBaseController
     {
-        private readonly FirstprojectAspWebApiDbContext _context;
-        private readonly IMapper _mapper;
         private readonly ILogger<WeatherForecastController> _logger;
-        private readonly IConfiguration _config;
-        public UserController(FirstprojectAspWebApiDbContext context,
-            IMapper mapper,
-            ILogger<WeatherForecastController> logger,
-            IConfiguration config)
+        private readonly IUserManager _userManager;
+        public UserController(ILogger<WeatherForecastController> logger,IUserManager userManager)
         {
-            _context = context;
-            _mapper = mapper;
             _logger = logger;
-            _config = config;
+            _userManager = userManager;
         }
 
         [HttpGet]
         [Route("api/user")]
         public IActionResult Get()
         {
-            return Ok(_mapper.Map<List<UserResultDTO>>(_context.Users));
+            //_mapper.Map<List<UserResultDTO>>(_context.Users)
+            return Ok();
         }
-        [Route("api/user/reg")]
+        [Route("api/user/SignUp")]
         [HttpPost]
         [AllowAnonymous]
-        public IActionResult Post([FromBody]UserRegistrationDTO userRegistrationDTO)
+        public IActionResult SignUp([FromBody]UserRegistrationDTO userRegistrationDTO)
         {
-            if(_context.Users.Any(usr=> usr.Email.ToLower().Equals(userRegistrationDTO.Email.ToLower())))
-            {
-                return BadRequest("User Already Exist");
-            }
-            var hashedPassword=HashPassword(userRegistrationDTO.Password);
-            var user = _context.Users.Add(
-                new User
-                {
-                    FirstName=userRegistrationDTO.FirstName,
-                    LastName=userRegistrationDTO.LastName,
-                    Email=userRegistrationDTO.Email,
-                    Password=hashedPassword,
-                    ConfirmPassword=hashedPassword,
-                    ImageUrl=string.Empty
-
-                }).Entity;
-            _context.SaveChanges();
-            return Ok(user);
+            var res=_userManager.SignUp(userRegistrationDTO);
+            return Ok(res);
         }
 
         [HttpPost]
-        [Route("api/user/login")]
+        [Route("api/user/LogIn")]
         [AllowAnonymous]
-        public IActionResult Post([FromBody] UserLoginDTO userLoginDTO)
+        public IActionResult LogIn([FromBody] UserLoginDTO userLoginDTO)
         {
-            var user=_context.Users.FirstOrDefault(usr=>usr.Email.ToLower().Equals(userLoginDTO.Email.ToLower()));
-            if (user == null || !VerifyHashPassword(userLoginDTO.Password, user.Password)){
-                throw new ServiceValidationException(300, "Invalid email or password received");
-            }
-            var result=_mapper.Map<UserLoginResponseDTO>(user);
-            result.Token = $"Bearer {GenerateJwtToken(user)}";
-            return Ok(result);
+            var res=_userManager.LogIn(userLoginDTO);
+            return Ok(res);
         }
 
         [Route("api/user/fileretrive/profilepic")]
@@ -92,24 +54,12 @@ namespace FirstprojectAspWebApi.Controllers
         }
 
         [HttpPut]
-        [Route("api/user/me")]
+        [Route("api/user/UpdateProfile")]
         [Authorize]
-        public IActionResult Put(UserDTO userDTO)
+        public IActionResult UpdateProfile(UserDTO userDTO)
         {
-            var user=_context.Users.FirstOrDefault(usr=>usr.Id==LoggedInUser.Id)
-                ?? throw new ServiceValidationException("User Not Found");
-            var url = "";
-            if (!string.IsNullOrWhiteSpace(userDTO.ImageString))
-            {
-                url = Helper.Helper.SaveImage(userDTO.ImageString, "profileimages");
-            }
-            if (!string.IsNullOrWhiteSpace(url))
-            {
-                var baseURL = "http://localhost:38197/";
-                user.ImageUrl = @$"{baseURL}/api/v1/user/fileretrive/profilepic?filename={url}";
-            }
-            _context.SaveChanges();
-            return Ok(_mapper.Map<UserDTO>(user));
+            var res = _userManager.UpdateProfile(LoggedInUser, userDTO);
+            return Ok(res);
         }
 
     }

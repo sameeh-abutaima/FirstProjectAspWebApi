@@ -1,4 +1,5 @@
 ﻿using System;
+using FirstprojectAspWebApi.DbModels.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 

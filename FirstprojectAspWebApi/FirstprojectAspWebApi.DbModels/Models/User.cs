@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 #nullable disable
 
-namespace FirstprojectAspWebApi.Models
+namespace FirstprojectAspWebApi.DbModels.Models
 {
     public partial class User
     {

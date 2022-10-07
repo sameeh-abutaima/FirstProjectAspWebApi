@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
+using FirstprojectAspWebApi.DbModels.Models;
 using FirstprojectAspWebApi.DTOs.Users;
-using FirstprojectAspWebApi.Models;
 
 namespace FirstprojectAspWebApi.Mappers
 {
