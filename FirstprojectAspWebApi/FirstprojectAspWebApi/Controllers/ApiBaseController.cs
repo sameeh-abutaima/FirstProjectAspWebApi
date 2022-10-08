@@ -1,4 +1,5 @@
-﻿using FirstprojectAspWebApi.DTOs.Users;
+﻿using FirstprojectAspWebApi.Core.Managers.Interfaces;
+using FirstprojectAspWebApi.DTOs.Users;
 using FirstprojectAspWebApi.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
@@ -27,14 +28,10 @@ namespace FirstprojectAspWebApi.Controllers
                 {
                     throw new ServiceValidationException(401, "Invalid or Expired Token");
                 }
-                return new UserDTO
-                {
-                    Id = id,
-                    FirstName = "Sameeh",
-                    LastName = "Abutaima",
-                    Email = "sameeh@gmail.com"
+                var commonManager=HttpContext.RequestServices.GetService(typeof(ICommonManager)) as ICommonManager;
+                _loggedInUser=commonManager.GetUserRole(new UserDTO { Id=id });
 
-                };
+                return _loggedInUser;
             }
         }
         public ApiBaseController()

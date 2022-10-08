@@ -34,6 +34,9 @@ namespace FirstprojectAspWebApi
             services.AddDbContext<FirstprojectAspWebApiDbContext>();
 
             services.AddScoped<IUserManager, UserManager>();
+            services.AddScoped<ICommonManager, CommonManager>();
+            services.AddScoped<ICsvManager, CsvManager>();
+            services.AddScoped<IRoleManager, RoleManager>();
             services.AddSingleton(services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies()));
             //services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddLogging();

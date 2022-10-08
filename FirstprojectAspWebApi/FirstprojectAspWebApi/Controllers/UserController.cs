@@ -10,9 +10,9 @@ namespace FirstprojectAspWebApi.Controllers
     [ApiController]
     public class UserController : ApiBaseController
     {
-        private readonly ILogger<WeatherForecastController> _logger;
+        private readonly ILogger<UserController> _logger;
         private readonly IUserManager _userManager;
-        public UserController(ILogger<WeatherForecastController> logger,IUserManager userManager)
+        public UserController(ILogger<UserController> logger,IUserManager userManager)
         {
             _logger = logger;
             _userManager = userManager;

@@ -12,6 +12,7 @@ namespace FirstprojectAspWebApi.Core.Managers.Interfaces
         public UserDTO UpdateProfile(UserDTO currentUserDTO,UserDTO userDTO);
         public UserLoginResponseDTO LogIn(UserLoginDTO userLoginDTO);
         public UserLoginResponseDTO SignUp(UserRegistrationDTO userRegistrationDTO);
+        public void DeleteUser(UserDTO currentUser, int id);
 
     }
 }

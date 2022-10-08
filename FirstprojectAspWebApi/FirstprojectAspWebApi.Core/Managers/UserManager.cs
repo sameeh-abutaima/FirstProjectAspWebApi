@@ -84,6 +84,19 @@ namespace FirstprojectAspWebApi.Core.Managers
             _context.SaveChanges();
             return _mapper.Map<UserDTO>(user);
         }
+
+        public void DeleteUser(UserDTO currentUser,int id)
+        {
+            if (currentUser.Id == id)
+            {
+                throw new ServiceValidationException("You have no access to delete your self");
+            }
+            var user = _context.Users
+                            .FirstOrDefault(usr => usr.Id == currentUser.Id)
+                            ?? throw new ServiceValidationException("User not found");
+            user.Archived=true;
+            _context.SaveChanges();
+        }
         #endregion public
 
         #region private

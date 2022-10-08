@@ -1,4 +1,6 @@
 ﻿
+using FirstprojectAspWebApi.Core.Managers.Interfaces;
+using FirstprojectAspWebApi.DTOs.Users;
 using FirstprojectAspWebApi.Exceptions;
 using FirstprojectAspWebApi.Exceptions.Logging;
 using Microsoft.AspNetCore.Builder;
@@ -120,20 +122,20 @@ namespace FirstprojectAspWebApi.Extensions
             {
                 logMessage.RequestPath = context.Request?.Path;
 
-                //var helperManager = context.RequestServices.GetService(typeof(ICommonManager)) as ICommonManager;
+                var helperManager = context.RequestServices.GetService(typeof(ICommonManager)) as ICommonManager;
 
                 var ClaimId = context.User.Claims.FirstOrDefault(c => c.Type == "Id")?.Value;
 
-                //if (!string.IsNullOrWhiteSpace(ClaimId) && int.TryParse(ClaimId, out int id))
-                //{
-                //    var user = helperManager.GetUserRole(new UserModel { Id = id });
+                if (!string.IsNullOrWhiteSpace(ClaimId) && int.TryParse(ClaimId, out int id))
+                {
+                    var user = helperManager.GetUserRole(new UserDTO { Id = id });
 
-                //    if (user != null)
-                //    {
-                //        logMessage.UserId = user.Id;
-                //        logMessage.UserEmail = user.Email;
-                //    }
-                //}
+                    if (user != null)
+                    {
+                        logMessage.UserId = user.Id;
+                        logMessage.UserEmail = user.Email;
+                    }
+                }
             }
             await logger.LogMessageAsync(logMessage).AnyContext();
         }

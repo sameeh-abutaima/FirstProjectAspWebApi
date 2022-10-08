@@ -16,6 +16,7 @@ namespace FirstprojectAspWebApi.DbModels.Models
         public string Email { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
+        public bool IsAdmin { get; set; }
         public bool Archived { get; set; }
     }
 }

@@ -166,7 +166,7 @@ namespace FirstprojectAspWebApi.Models
 
             modelBuilder.Entity<SubCategory>().HasQueryFilter(subCtgry=>!subCtgry.Archived||IgnoreFilter);
             modelBuilder.Entity<Category>().HasQueryFilter(ctgry=>!ctgry.Archived||IgnoreFilter);
-            modelBuilder.Entity<Item>().HasQueryFilter(item=>IgnoreFilter);
+            modelBuilder.Entity<Item>().HasQueryFilter(item=>!item.Archived || IgnoreFilter);
             modelBuilder.Entity<User>().HasQueryFilter(usr => !usr.Archived || IgnoreFilter);
             OnModelCreatingPartial(modelBuilder);
         }

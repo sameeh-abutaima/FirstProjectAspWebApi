@@ -12,18 +12,18 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using CsvHelper;
+using FirstprojectAspWebApi.Core.Managers.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+using FirstprojectAspWebApi.Attributes;
 
 namespace FirstprojectAspWebApi.Controllers
 {
     public class CsvController:ApiBaseController
     {
-        private readonly FirstprojectAspWebApiDbContext _context;
-        private readonly IMapper _mapper;
-
-        public CsvController(FirstprojectAspWebApiDbContext context, IMapper mapper)
+        private readonly ICsvManager _csvManager;
+        public CsvController(ICsvManager csvManager)
         {
-            _context = context;
-            _mapper = mapper;
+            _csvManager = csvManager;
         }
 
         [HttpGet]
@@ -47,32 +47,13 @@ namespace FirstprojectAspWebApi.Controllers
         }
 
         [HttpGet]
-        [Route("test/api/{id}")]
-        public IActionResult Get(int id)
+        [Route("api/test/export")]
+        [Authorize]
+        [FirstprojectAspWebApiAuthorize()]
+        public IActionResult ExportToCsv()
         {
-            var viewRes = _context.DetailsOfItems.Select(a => new { a.CategoryId });
-
-            var modelView = _mapper.Map<List<CsvDTO>>(viewRes);
-
-            var combinedRes = _context.Items
-                                           .Select(a => new CsvDTO
-                                           {
-                                               ItemId = a.Id,
-                                               SubCategoryId = a.SubCategoryId,
-                                               ItemName = a.Name,
-                                               SubCategoryName = a.SubCategory.Name,
-                                               CategoryName = a.SubCategory.Category.Name,
-                                               CategoryId = a.SubCategory.CategoryId,
-                                               // Archived = a.Archived
-                                           })
-                                           .ToList();
-
-            using (var writer = new StreamWriter("C:\\Users\\logitude\\Desktop\\tarining\\ItemsDB.csv"))
-            using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
-            {
-                csv.WriteRecords(modelView);
-            }
-
+            
+            _csvManager.ExportToCsv();
             return Ok();
         }
 
